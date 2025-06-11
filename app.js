@@ -4,6 +4,7 @@ const fs = require('fs');
 const session = require('express-session');
 const multer = require('multer');
 const auth = require('./config/auth');
+const userDb = require('./config/users');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -195,8 +196,140 @@ app.get('/logout', (req, res) => {
         } else {
             console.log('✅ User logged out:', username);
         }
-        res.redirect('/login?success=' + encodeURIComponent('Successfully logged out'));
+        res.redirect('/auth?success=' + encodeURIComponent('Successfully logged out'));
     });
+});
+
+// New unified auth routes
+app.get('/auth', (req, res) => {
+    res.render('auth', { error: req.query.error, success: req.query.success });
+});
+
+// User dashboard for regular users
+app.get('/user-dashboard', requireAuth, (req, res) => {
+    if (req.session.user.role === 'admin') {
+        return res.redirect('/admin');
+    }
+    res.render('user-dashboard', { user: req.session.user });
+});
+
+// Auth/login handler for both users and admins
+app.post('/auth/login', async (req, res) => {
+    try {
+        console.log('🔐 Unified login attempt:', { username: req.body.username, userType: req.body.userType });
+
+        const { username, password, userType, remember } = req.body;
+
+        if (!username || !password) {
+            return res.redirect('/auth?error=' + encodeURIComponent('Please enter both username and password'));
+        }
+
+        let user = null;
+
+        if (userType === 'admin') {
+            // Admin login - check admin credentials
+            user = auth.findUserByUsername(username);
+            console.log('👑 Admin user found:', user ? 'YES' : 'NO');
+
+            if (!user || user.role !== 'admin') {
+                return res.redirect('/auth?error=' + encodeURIComponent('Invalid admin credentials'));
+            }
+        } else {
+            // Regular user login - check user database
+            user = userDb.findRegularUser(username);
+            console.log('👤 Regular user found:', user ? 'YES' : 'NO');
+
+            if (!user) {
+                return res.redirect('/auth?error=' + encodeURIComponent('Invalid username or password'));
+            }
+        }
+
+        // Validate password
+        console.log('🔑 Validating password...');
+        const isValidPassword = userType === 'admin'
+            ? await auth.validatePassword(password, user.password)
+            : await userDb.validatePassword(password, user.password);
+        console.log('🔑 Password valid:', isValidPassword);
+
+        if (!isValidPassword) {
+            return res.redirect('/auth?error=' + encodeURIComponent('Invalid username or password'));
+        }
+
+        // Set session
+        req.session.user = {
+            id: user.id,
+            username: user.username,
+            name: user.name || user.fullName,
+            role: user.role || 'user',
+            userType: userType
+        };
+
+        // Set remember me cookie if requested
+        if (remember) {
+            req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+        } else {
+            req.session.cookie.maxAge = 24 * 60 * 60 * 1000; // 1 day
+        }
+
+        console.log('✅ User logged in:', username, 'as', userType);
+
+        // Redirect based on role
+        if (userType === 'admin' && user.role === 'admin') {
+            res.redirect('/admin');
+        } else {
+            res.redirect('/user-dashboard');
+        }
+    } catch (error) {
+        console.error('❌ Login error:', error);
+        res.redirect('/auth?error=' + encodeURIComponent('Login failed. Please try again.'));
+    }
+});
+
+// Signup handler for regular users
+app.post('/auth/signup', async (req, res) => {
+    try {
+        console.log('📝 Signup attempt:', { username: req.body.username, email: req.body.email });
+
+        const { fullName, username, email, password, confirmPassword } = req.body;
+
+        if (!fullName || !username || !email || !password || !confirmPassword) {
+            return res.redirect('/auth?error=' + encodeURIComponent('Please fill in all fields'));
+        }
+
+        if (password !== confirmPassword) {
+            return res.redirect('/auth?error=' + encodeURIComponent('Passwords do not match'));
+        }
+
+        if (password.length < 6) {
+            return res.redirect('/auth?error=' + encodeURIComponent('Password must be at least 6 characters long'));
+        }
+
+        // Check if user already exists
+        const existingUser = userDb.findRegularUser(username);
+        if (existingUser) {
+            return res.redirect('/auth?error=' + encodeURIComponent('Username already exists'));
+        }
+
+        const existingEmail = userDb.findUserByEmail(email);
+        if (existingEmail) {
+            return res.redirect('/auth?error=' + encodeURIComponent('Email already registered'));
+        }
+
+        // Create new user
+        const hashedPassword = await userDb.hashPassword(password);
+        const newUser = userDb.createRegularUser({
+            fullName,
+            username,
+            email,
+            password: hashedPassword
+        });
+
+        console.log('✅ User created:', username);
+        res.redirect('/auth?success=' + encodeURIComponent('Account created successfully! Please login.'));
+    } catch (error) {
+        console.error('❌ Signup error:', error);
+        res.redirect('/auth?error=' + encodeURIComponent('Signup failed. Please try again.'));
+    }
 });
 
 // Serve admin panel (protected) - Multiple secret access points
