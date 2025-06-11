@@ -971,6 +971,102 @@ app.post('/api/test-upload', requireAuth, (req, res) => {
     res.json({ success: true, message: 'Test endpoint working!' });
 });
 
+// Update admin credentials endpoint
+app.post('/api/update-credentials', requireAuth, express.json(), async (req, res) => {
+    try {
+        console.log('🔐 Credential update request received:', req.body);
+        const { username, password, displayName } = req.body;
+
+        if (!username || !password || !displayName) {
+            return res.status(400).json({ success: false, message: 'All fields are required' });
+        }
+
+        if (username.length < 3) {
+            return res.status(400).json({ success: false, message: 'Username must be at least 3 characters long' });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({ success: false, message: 'Password must be at least 8 characters long' });
+        }
+
+        // Hash the new password
+        const bcrypt = require('bcryptjs');
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create the new auth file content
+        const newAuthContent = `// Authentication Configuration
+const bcrypt = require('bcryptjs');
+
+// Default admin credentials
+// Username: ${username}
+// Password: ${password} (Updated via admin panel)
+const defaultUsers = [
+    {
+        id: 1,
+        username: '${username}',
+        // This is '${password}' hashed
+        password: '${hashedPassword}',
+        role: 'admin',
+        name: '${displayName}'
+    }
+];
+
+// You can add more users here
+const users = [
+    ...defaultUsers,
+    // Add more users like this:
+    // {
+    //     id: 2,
+    //     username: 'yourname',
+    //     password: await bcrypt.hash('yourpassword', 10),
+    //     role: 'admin',
+    //     name: 'Your Name'
+    // }
+];
+
+// Function to find user by username
+function findUserByUsername(username) {
+    return users.find(user => user.username === username);
+}
+
+// Function to validate password
+async function validatePassword(plainPassword, hashedPassword) {
+    return await bcrypt.compare(plainPassword, hashedPassword);
+}
+
+// Function to hash password (for creating new users)
+async function hashPassword(password) {
+    return await bcrypt.hash(password, 10);
+}
+
+module.exports = {
+    users,
+    findUserByUsername,
+    validatePassword,
+    hashPassword
+};
+`;
+
+        // Write the new auth file
+        const authPath = path.join(__dirname, 'config', 'auth.js');
+        fs.writeFileSync(authPath, newAuthContent);
+
+        console.log('✅ Credentials updated successfully');
+        res.json({
+            success: true,
+            message: 'Credentials updated successfully! Please refresh the page and login with new credentials.',
+            newUsername: username,
+            requiresRestart: false
+        });
+
+        console.log('🔄 Credentials updated - no restart needed');
+
+    } catch (error) {
+        console.error('❌ Error updating credentials:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // Get uploaded files list
 app.get('/api/uploads', requireAuth, (req, res) => {
     try {
@@ -1005,6 +1101,6 @@ app.get('/api/uploads', requireAuth, (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`🔐 Admin panel: http://localhost:${PORT}/admin`);
-    console.log(`📝 Login with: admin / password123`);
+    console.log(`📝 Admin login available`);
     console.log(`📁 Serving from: ${__dirname}`);
 });

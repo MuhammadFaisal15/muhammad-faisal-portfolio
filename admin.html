@@ -416,6 +416,71 @@
                 <h2 class="mb-4"><i class="fas fa-edit text-primary me-2"></i>Manage Existing Content</h2>
                 <p class="text-muted">Edit and delete content directly with working buttons!</p>
 
+                <!-- User Management Section -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">🔐 Admin Credentials Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Current Credentials:</strong> Username: <code>admin</code> | Password: <code>admin123</code>
+                        </div>
+
+                        <form id="credentialsForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">🔑 New Username</label>
+                                        <input type="text" class="form-control" id="newUsername" placeholder="Enter new username" value="admin">
+                                        <small class="text-muted">Choose a secure username</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">🔒 New Password</label>
+                                        <input type="password" class="form-control" id="newPassword" placeholder="Enter new password">
+                                        <small class="text-muted">Use a strong password (8+ characters)</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">🔒 Confirm Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">👤 Display Name</label>
+                                        <input type="text" class="form-control" id="displayName" placeholder="Your full name" value="Muhammad Faisal">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-warning" onclick="updateCredentials()">
+                                    <i class="fas fa-key me-2"></i>Update Credentials
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="generateStrongPassword()">
+                                    <i class="fas fa-random me-2"></i>Generate Strong Password
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="mt-4">
+                            <h6>🛡️ Security Tips:</h6>
+                            <ul class="small text-muted">
+                                <li>Use a unique username (not "admin")</li>
+                                <li>Create a strong password with 8+ characters</li>
+                                <li>Include uppercase, lowercase, numbers, and symbols</li>
+                                <li>Don't share your credentials publicly</li>
+                                <li>Change credentials regularly</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Current Projects -->
                 <div class="edit-section">
                     <h3><i class="fas fa-code text-info me-2"></i>Current Projects</h3>
@@ -2154,6 +2219,97 @@ Line 1: # 🤖 ${data.websiteName} Portfolio Website
             } catch (error) {
                 document.querySelector('.upload-progress').classList.add('d-none');
                 showErrorToast('❌ Upload failed: ' + error.message);
+            }
+        }
+
+        // Credential Management Functions
+        function generateStrongPassword() {
+            const length = 12;
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                password += charset.charAt(Math.floor(Math.random() * charset.length));
+            }
+
+            document.getElementById('newPassword').value = password;
+            document.getElementById('confirmPassword').value = password;
+            showSuccessToast('🔑 Strong password generated!');
+        }
+
+        async function updateCredentials() {
+            const newUsername = document.getElementById('newUsername').value.trim();
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const displayName = document.getElementById('displayName').value.trim();
+
+            // Validation
+            if (!newUsername || newUsername.length < 3) {
+                showErrorToast('❌ Username must be at least 3 characters long');
+                return;
+            }
+
+            if (!newPassword || newPassword.length < 8) {
+                showErrorToast('❌ Password must be at least 8 characters long');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showErrorToast('❌ Passwords do not match');
+                return;
+            }
+
+            if (!displayName) {
+                showErrorToast('❌ Display name is required');
+                return;
+            }
+
+            try {
+                showLoadingToast('🔄 Updating credentials...');
+
+                const response = await fetch('/api/update-credentials', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: newUsername,
+                        password: newPassword,
+                        displayName: displayName
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('✅ Credentials updated successfully! Please login with your new credentials.');
+
+                    // Update the current credentials display
+                    document.querySelector('.alert-info').innerHTML = `
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>New Credentials:</strong> Username: <code>${newUsername}</code> | Password: <code>${newPassword}</code>
+                    `;
+
+                    // Clear form
+                    document.getElementById('credentialsForm').reset();
+                    document.getElementById('newUsername').value = newUsername;
+                    document.getElementById('displayName').value = displayName;
+
+                    // Show logout notification
+                    showLoadingToast('🔄 Logging out to apply new credentials...');
+
+                    // Redirect to login with new credentials
+                    setTimeout(() => {
+                        showSuccessToast('✅ Please login with your new credentials.');
+                        setTimeout(() => {
+                            window.location.href = '/logout';
+                        }, 1000);
+                    }, 2000);
+                } else {
+                    showErrorToast('❌ Failed to update credentials: ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Credential update error:', error);
+                showErrorToast('❌ Failed to update credentials: ' + error.message);
             }
         }
 

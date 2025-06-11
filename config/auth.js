@@ -2,14 +2,14 @@
 const bcrypt = require('bcryptjs');
 
 // Default admin credentials
-// Username: admin
-// Password: admin123 (SIMPLE PASSWORD FOR TESTING)
+// Username: faisal
+// Password: faisal123 (Updated via admin panel)
 const defaultUsers = [
     {
         id: 1,
-        username: 'admin',
-        // This is 'admin123' hashed - SIMPLE PASSWORD!
-        password: '$2b$10$X9pEMomjUEhsW45B/iPm0uBUkMgnns45de2fB.jiVouDUtrvTprzS',
+        username: 'faisal',
+        // This is 'faisal123' hashed
+        password: '$2b$10$h5ICWpdXh/1uqzTOgvDsZ.dWy9Tqgs4Mn2DEm08ZXEehRS/5A7gIW',
         role: 'admin',
         name: 'Muhammad Faisal'
     }
