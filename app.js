@@ -22,7 +22,7 @@ app.use(express.json());
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: function (_req, file, cb) {
         if (file.mimetype.startsWith('image/')) {
             cb(null, 'uploads/images/');
         } else if (file.mimetype.startsWith('video/')) {
@@ -31,7 +31,7 @@ const storage = multer.diskStorage({
             cb(new Error('Invalid file type'), null);
         }
     },
-    filename: function (req, file, cb) {
+    filename: function (_req, file, cb) {
         // Generate unique filename with timestamp
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
@@ -43,7 +43,7 @@ const upload = multer({
     limits: {
         fileSize: 50 * 1024 * 1024, // 50MB limit
     },
-    fileFilter: function (req, file, cb) {
+    fileFilter: function (_req, file, cb) {
         // Accept images and videos
         if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
             cb(null, true);
@@ -73,42 +73,38 @@ function requireAuth(req, res, next) {
     }
 }
 
-// Check if user is logged in (for conditional rendering)
-function checkAuth(req, res, next) {
-    res.locals.user = req.session.user || null;
-    next();
-}
+
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
     res.render('index', {
         title: 'Home - AI Student Portfolio',
         page: 'home'
     });
 });
 
-app.get('/about', (req, res) => {
+app.get('/about', (_req, res) => {
     res.render('about', {
         title: 'About - AI Student Portfolio',
         page: 'about'
     });
 });
 
-app.get('/projects', (req, res) => {
+app.get('/projects', (_req, res) => {
     res.render('projects', {
         title: 'Projects - AI Student Portfolio',
         page: 'projects'
     });
 });
 
-app.get('/blog', (req, res) => {
+app.get('/blog', (_req, res) => {
     res.render('blog', {
         title: 'Blog - AI Student Portfolio',
         page: 'blog'
     });
 });
 
-app.get('/contact', (req, res) => {
+app.get('/contact', (_req, res) => {
     res.render('contact', {
         title: 'Contact - AI Student Portfolio',
         page: 'contact'
@@ -202,7 +198,12 @@ app.get('/logout', (req, res) => {
 
 // New unified auth routes
 app.get('/auth', (req, res) => {
-    res.render('auth', { error: req.query.error, success: req.query.success });
+    res.render('auth', {
+        error: req.query.error,
+        success: req.query.success,
+        title: 'Login & Signup - Muhammad Faisal Portfolio',
+        page: 'auth'
+    });
 });
 
 // User dashboard for regular users
@@ -213,40 +214,44 @@ app.get('/user-dashboard', requireAuth, (req, res) => {
     res.render('user-dashboard', { user: req.session.user });
 });
 
-// Auth/login handler for both users and admins
+// Auth/login handler - Auto-detect admin vs user
 app.post('/auth/login', async (req, res) => {
     try {
-        console.log('🔐 Unified login attempt:', { username: req.body.username, userType: req.body.userType });
+        console.log('🔐 Auto-detect login attempt:', { username: req.body.username });
 
-        const { username, password, userType, remember } = req.body;
+        const { username, password, remember } = req.body;
 
         if (!username || !password) {
             return res.redirect('/auth?error=' + encodeURIComponent('Please enter both username and password'));
         }
 
         let user = null;
+        let isAdmin = false;
 
-        if (userType === 'admin') {
-            // Admin login - check admin credentials
-            user = auth.findUserByUsername(username);
-            console.log('👑 Admin user found:', user ? 'YES' : 'NO');
-
-            if (!user || user.role !== 'admin') {
-                return res.redirect('/auth?error=' + encodeURIComponent('Invalid admin credentials'));
-            }
+        // First, check if this is an admin user
+        const adminUser = auth.findUserByUsername(username);
+        if (adminUser && adminUser.role === 'admin') {
+            console.log('👑 Admin user detected:', username);
+            user = adminUser;
+            isAdmin = true;
         } else {
-            // Regular user login - check user database
-            user = userDb.findRegularUser(username);
-            console.log('👤 Regular user found:', user ? 'YES' : 'NO');
-
-            if (!user) {
-                return res.redirect('/auth?error=' + encodeURIComponent('Invalid username or password'));
+            // If not admin, check regular user database
+            const regularUser = userDb.findRegularUser(username);
+            if (regularUser) {
+                console.log('👤 Regular user found:', username);
+                user = regularUser;
+                isAdmin = false;
             }
+        }
+
+        if (!user) {
+            console.log('❌ User not found:', username);
+            return res.redirect('/auth?error=' + encodeURIComponent('Invalid username or password'));
         }
 
         // Validate password
         console.log('🔑 Validating password...');
-        const isValidPassword = userType === 'admin'
+        const isValidPassword = isAdmin
             ? await auth.validatePassword(password, user.password)
             : await userDb.validatePassword(password, user.password);
         console.log('🔑 Password valid:', isValidPassword);
@@ -261,7 +266,7 @@ app.post('/auth/login', async (req, res) => {
             username: user.username,
             name: user.name || user.fullName,
             role: user.role || 'user',
-            userType: userType
+            isAdmin: isAdmin
         };
 
         // Set remember me cookie if requested
@@ -271,10 +276,10 @@ app.post('/auth/login', async (req, res) => {
             req.session.cookie.maxAge = 24 * 60 * 60 * 1000; // 1 day
         }
 
-        console.log('✅ User logged in:', username, 'as', userType);
+        console.log('✅ User logged in:', username, 'as', isAdmin ? 'ADMIN' : 'USER');
 
-        // Redirect based on role
-        if (userType === 'admin' && user.role === 'admin') {
+        // Redirect based on detected role
+        if (isAdmin) {
             res.redirect('/admin');
         } else {
             res.redirect('/user-dashboard');
@@ -317,7 +322,7 @@ app.post('/auth/signup', async (req, res) => {
 
         // Create new user
         const hashedPassword = await userDb.hashPassword(password);
-        const newUser = userDb.createRegularUser({
+        userDb.createRegularUser({
             fullName,
             username,
             email,
@@ -333,20 +338,20 @@ app.post('/auth/signup', async (req, res) => {
 });
 
 // Serve admin panel (protected) - Multiple secret access points
-app.get('/admin', requireAuth, (req, res) => {
+app.get('/admin', requireAuth, (_req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
 // Secret admin access routes (hidden from public)
-app.get('/dashboard', requireAuth, (req, res) => {
+app.get('/dashboard', requireAuth, (_req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-app.get('/manage', requireAuth, (req, res) => {
+app.get('/manage', requireAuth, (_req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-app.get('/control-panel', requireAuth, (req, res) => {
+app.get('/control-panel', requireAuth, (_req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
@@ -759,7 +764,7 @@ app.post('/api/add-blog', requireAuth, express.json(), (req, res) => {
 app.post('/api/update-contact', requireAuth, express.json(), (req, res) => {
     try {
         console.log('📝 Contact page update request received:', req.body);
-        const { email, location, github, linkedin, twitter, youtube } = req.body;
+        const { email, location } = req.body;
         const filePath = path.join(__dirname, 'views', 'contact.ejs');
 
         console.log('📁 Reading file:', filePath);
@@ -806,7 +811,7 @@ app.post('/api/update-contact', requireAuth, express.json(), (req, res) => {
 });
 
 // API to get existing projects for editing
-app.get('/api/projects', requireAuth, (req, res) => {
+app.get('/api/projects', requireAuth, (_req, res) => {
     try {
         const filePath = path.join(__dirname, 'views', 'projects.ejs');
         const content = fs.readFileSync(filePath, 'utf8');
@@ -865,7 +870,7 @@ app.delete('/api/projects/:id', requireAuth, (req, res) => {
 });
 
 // API to get existing blog posts
-app.get('/api/blog-posts', requireAuth, (req, res) => {
+app.get('/api/blog-posts', requireAuth, (_req, res) => {
     try {
         const filePath = path.join(__dirname, 'views', 'blog.ejs');
         const content = fs.readFileSync(filePath, 'utf8');
@@ -1099,7 +1104,7 @@ app.post('/api/upload-video', requireAuth, upload.single('video'), (req, res) =>
 });
 
 // Test upload endpoint
-app.post('/api/test-upload', requireAuth, (req, res) => {
+app.post('/api/test-upload', requireAuth, (_req, res) => {
     console.log('🧪 Test upload endpoint hit');
     res.json({ success: true, message: 'Test endpoint working!' });
 });
@@ -1201,7 +1206,7 @@ module.exports = {
 });
 
 // Get uploaded files list
-app.get('/api/uploads', requireAuth, (req, res) => {
+app.get('/api/uploads', requireAuth, (_req, res) => {
     try {
         const imagesDir = path.join(__dirname, 'uploads', 'images');
         const videosDir = path.join(__dirname, 'uploads', 'videos');
