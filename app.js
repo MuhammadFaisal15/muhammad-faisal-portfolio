@@ -1235,10 +1235,15 @@ app.get('/api/uploads', requireAuth, (_req, res) => {
     }
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`🔐 Admin panel: http://localhost:${PORT}/admin`);
-    console.log(`📝 Admin login available`);
-    console.log(`📁 Serving from: ${__dirname}`);
-});
+// Start server (only in development)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running on http://localhost:${PORT}`);
+        console.log(`🔐 Admin panel: http://localhost:${PORT}/admin`);
+        console.log(`📝 Admin login available`);
+        console.log(`📁 Serving from: ${__dirname}`);
+    });
+}
+
+// Export app for Vercel
+module.exports = app;
