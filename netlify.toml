@@ -1,0 +1,47 @@
+[build]
+  command = "npm install && npm run build"
+  functions = "netlify/functions"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/admin"
+  to = "/.netlify/functions/admin"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/.netlify/functions/admin"
+  status = 200
+
+[[redirects]]
+  from = "/manage"
+  to = "/.netlify/functions/admin"
+  status = 200
+
+[[redirects]]
+  from = "/control-panel"
+  to = "/.netlify/functions/admin"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/.netlify/functions/auth"
+  status = 200
+
+[[redirects]]
+  from = "/logout"
+  to = "/.netlify/functions/auth"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

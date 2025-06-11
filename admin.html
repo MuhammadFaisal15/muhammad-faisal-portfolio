@@ -1,0 +1,2542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Portfolio Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 2rem 0;
+        }
+        .edit-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .preview-box {
+            background: white;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .nav-pills .nav-link {
+            border-radius: 25px;
+            margin: 0 5px;
+        }
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-cog me-3"></i>Complete Portfolio Admin Panel</h1>
+                    <p class="mb-0">Manage every aspect of your AI portfolio website with ease</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="http://localhost:3000" target="_blank" class="btn btn-light btn-lg">
+                            <i class="fas fa-external-link-alt me-2"></i>View Live Site
+                        </a>
+                        <a href="/logout" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container my-5">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-pills nav-fill mb-4" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="homepage-tab" data-bs-toggle="pill" data-bs-target="#homepage-panel" type="button">
+                    <i class="fas fa-home me-2"></i>Homepage
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="about-tab" data-bs-toggle="pill" data-bs-target="#about-panel" type="button">
+                    <i class="fas fa-user me-2"></i>About
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="projects-tab" data-bs-toggle="pill" data-bs-target="#projects-panel" type="button">
+                    <i class="fas fa-code me-2"></i>Projects
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="blog-tab" data-bs-toggle="pill" data-bs-target="#blog-panel" type="button">
+                    <i class="fas fa-blog me-2"></i>Blog
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="contact-tab" data-bs-toggle="pill" data-bs-target="#contact-panel" type="button">
+                    <i class="fas fa-envelope me-2"></i>Contact
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="manage-tab" data-bs-toggle="pill" data-bs-target="#manage-panel" type="button">
+                    <i class="fas fa-edit me-2"></i>Manage Content
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="global-tab" data-bs-toggle="pill" data-bs-target="#global-panel" type="button">
+                    <i class="fas fa-cog me-2"></i>Global
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="adminTabContent">
+            
+            <!-- HOMEPAGE PANEL -->
+            <div class="tab-pane fade show active" id="homepage-panel" role="tabpanel">
+                <h2 class="mb-4"><i class="fas fa-home text-primary me-2"></i>Homepage Management</h2>
+                
+                <!-- Hero Section -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-star text-warning me-2"></i>Hero Section</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Your Name</label>
+                                <input type="text" class="form-control" id="heroName" placeholder="Enter your full name">
+                                <small class="text-muted">Main headline name</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Professional Title</label>
+                                <input type="text" class="form-control" id="heroTitle" placeholder="e.g., AI Student, Data Scientist">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">📸 Your Profile Photo</label>
+                                <div class="input-group">
+                                    <input type="url" class="form-control" id="heroPhoto" placeholder="Your photo URL will appear here after upload">
+                                    <label class="btn btn-outline-primary" for="heroPhotoUpload">
+                                        <i class="fas fa-upload"></i> Upload Photo
+                                    </label>
+                                    <input type="file" id="heroPhotoUpload" class="d-none" accept="image/*" onchange="uploadHeroPhoto(this)">
+                                </div>
+                                <small class="text-muted">Upload your professional headshot for the homepage hero section</small>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Hero Description</label>
+                                <textarea class="form-control" id="heroDescription" rows="3" placeholder="Your main introduction..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-box">
+                        <strong>Preview:</strong>
+                        <h4>Hello, I'm <span class="text-warning" id="heroNamePreview">Your Name</span></h4>
+                        <p id="heroDescPreview">Your description will appear here...</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-lg" onclick="generateHomepageCode()">
+                        <i class="fas fa-code me-2"></i>Generate Code
+                    </button>
+                    <button class="btn btn-success btn-lg" onclick="autoUpdateHomepage()">
+                        <i class="fas fa-magic me-2"></i>Auto-Update Files
+                    </button>
+                </div>
+            </div>
+
+            <!-- ABOUT PAGE PANEL -->
+            <div class="tab-pane fade" id="about-panel" role="tabpanel">
+                <h2 class="mb-4"><i class="fas fa-user text-primary me-2"></i>About Page Management</h2>
+                
+                <!-- Personal Story -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-book text-info me-2"></i>Personal Story</h3>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Main Heading</label>
+                                <input type="text" class="form-control" id="aboutHeading" value="Hello! I'm an AI Enthusiast">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">📸 About Page Photos</label>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Main Photo</label>
+                                        <div class="input-group mb-2">
+                                            <input type="url" class="form-control" id="aboutPhoto1" placeholder="Photo URL will appear here">
+                                            <label class="btn btn-outline-primary" for="aboutPhoto1Upload">
+                                                <i class="fas fa-upload"></i>
+                                            </label>
+                                            <input type="file" id="aboutPhoto1Upload" class="d-none" accept="image/*" onchange="uploadAboutPhoto(this, 'aboutPhoto1')">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Workspace Photo</label>
+                                        <div class="input-group mb-2">
+                                            <input type="url" class="form-control" id="aboutPhoto2" placeholder="Photo URL will appear here">
+                                            <label class="btn btn-outline-primary" for="aboutPhoto2Upload">
+                                                <i class="fas fa-upload"></i>
+                                            </label>
+                                            <input type="file" id="aboutPhoto2Upload" class="d-none" accept="image/*" onchange="uploadAboutPhoto(this, 'aboutPhoto2')">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Learning Photo</label>
+                                        <div class="input-group mb-2">
+                                            <input type="url" class="form-control" id="aboutPhoto3" placeholder="Photo URL will appear here">
+                                            <label class="btn btn-outline-primary" for="aboutPhoto3Upload">
+                                                <i class="fas fa-upload"></i>
+                                            </label>
+                                            <input type="file" id="aboutPhoto3Upload" class="d-none" accept="image/*" onchange="uploadAboutPhoto(this, 'aboutPhoto3')">
+                                        </div>
+                                    </div>
+                                </div>
+                                <small class="text-muted">Upload photos that tell your story - main photo, workspace, learning moments</small>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">First Paragraph</label>
+                                <textarea class="form-control" id="aboutPara1" rows="4" placeholder="Your introduction paragraph...">Welcome to my digital space! I'm a passionate student diving deep into the world of Artificial Intelligence, Machine Learning, and emerging technologies.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-lg" onclick="generateAboutCode()">
+                        <i class="fas fa-code me-2"></i>Generate Code
+                    </button>
+                    <button class="btn btn-success btn-lg" onclick="autoUpdateAbout()">
+                        <i class="fas fa-magic me-2"></i>Auto-Update Files
+                    </button>
+                </div>
+            </div>
+
+            <!-- PROJECTS PAGE PANEL -->
+            <div class="tab-pane fade" id="projects-panel" role="tabpanel">
+                <h2 class="mb-4"><i class="fas fa-code text-primary me-2"></i>Projects Page Management</h2>
+                
+                <!-- Add New Project -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-plus text-success me-2"></i>Add New Project</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Project Name</label>
+                                <input type="text" class="form-control" id="newProjectName" placeholder="e.g., AI Chatbot">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Project Icon</label>
+                                <select class="form-select" id="newProjectIcon">
+                                    <option value="fas fa-robot">🤖 Robot</option>
+                                    <option value="fas fa-brain">🧠 Brain</option>
+                                    <option value="fas fa-chart-line">📈 Chart</option>
+                                    <option value="fas fa-eye">👁️ Eye</option>
+                                    <option value="fas fa-language">🗣️ Language</option>
+                                    <option value="fas fa-code">💻 Code</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Project Description</label>
+                                <textarea class="form-control" id="newProjectDescription" rows="3" placeholder="Describe your project..."></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Technologies (comma separated)</label>
+                                <input type="text" class="form-control" id="newProjectTech" placeholder="Python, TensorFlow, React">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">GitHub Link</label>
+                                <input type="url" class="form-control" id="newProjectGithub" placeholder="https://github.com/...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">📸 Project Image</label>
+                                <div class="input-group">
+                                    <input type="url" class="form-control" id="newProjectImage" placeholder="https://example.com/screenshot.jpg">
+                                    <button class="btn btn-outline-primary" type="button" onclick="showImageUpload('newProjectImage')">
+                                        <i class="fas fa-upload"></i> Upload
+                                    </button>
+                                </div>
+                                <small class="text-muted">Enter URL or upload image file</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">🎬 Demo Video</label>
+                                <div class="input-group">
+                                    <input type="url" class="form-control" id="newProjectVideo" placeholder="https://youtube.com/watch?v=...">
+                                    <button class="btn btn-outline-danger" type="button" onclick="showVideoUpload('newProjectVideo')">
+                                        <i class="fas fa-upload"></i> Upload
+                                    </button>
+                                </div>
+                                <small class="text-muted">Enter URL or upload video file</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" onclick="generateNewProjectCode()">
+                            <i class="fas fa-code me-2"></i>Generate Code
+                        </button>
+                        <button class="btn btn-success" onclick="autoAddProject()">
+                            <i class="fas fa-magic me-2"></i>Auto-Add Project
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOG PAGE PANEL -->
+            <div class="tab-pane fade" id="blog-panel" role="tabpanel">
+                <h2 class="mb-4"><i class="fas fa-blog text-primary me-2"></i>Blog Page Management</h2>
+                
+                <!-- Add New Blog Post -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-plus text-success me-2"></i>Add New Blog Post</h3>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label">Blog Title</label>
+                                <input type="text" class="form-control" id="newBlogTitle" placeholder="e.g., My Journey with Neural Networks">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" id="newBlogCategory">
+                                    <option value="Machine Learning">Machine Learning</option>
+                                    <option value="Natural Language Processing">NLP</option>
+                                    <option value="Computer Vision">Computer Vision</option>
+                                    <option value="Learning Journey">Learning Journey</option>
+                                    <option value="Tutorial">Tutorial</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Blog Excerpt</label>
+                                <textarea class="form-control" id="newBlogExcerpt" rows="4" placeholder="Write a brief summary of your blog post..."></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tags (comma separated)</label>
+                                <input type="text" class="form-control" id="newBlogTags" placeholder="AI, Python, Beginner">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" id="newBlogDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" onclick="generateNewBlogCode()">
+                            <i class="fas fa-code me-2"></i>Generate Code
+                        </button>
+                        <button class="btn btn-success" onclick="autoAddBlog()">
+                            <i class="fas fa-magic me-2"></i>Auto-Add Blog Post
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTACT PAGE PANEL -->
+            <div class="tab-pane fade" id="contact-panel" role="tabpanel">
+                <h2 class="mb-4"><i class="fas fa-envelope text-primary me-2"></i>Contact Page Management</h2>
+                
+                <!-- Contact Information -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-address-card text-success me-2"></i>Contact Information</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="contactEmail" placeholder="your.email@example.com">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Location</label>
+                                <input type="text" class="form-control" id="contactLocation" placeholder="Your City, Country">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fab fa-github me-2"></i>GitHub</label>
+                                <input type="url" class="form-control" id="contactGithub" placeholder="https://github.com/yourusername">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fab fa-linkedin me-2"></i>LinkedIn</label>
+                                <input type="url" class="form-control" id="contactLinkedin" placeholder="https://linkedin.com/in/yourprofile">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-lg" onclick="generateContactCode()">
+                        <i class="fas fa-code me-2"></i>Generate Code
+                    </button>
+                    <button class="btn btn-success btn-lg" onclick="autoUpdateContact()">
+                        <i class="fas fa-magic me-2"></i>Auto-Update Files
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTENT MANAGER PANEL -->
+            <div class="tab-pane fade" id="manage-panel" role="tabpanel">
+                <h2 class="mb-4"><i class="fas fa-edit text-primary me-2"></i>Manage Existing Content</h2>
+                <p class="text-muted">Edit and delete content directly with working buttons!</p>
+
+                <!-- Current Projects -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-code text-info me-2"></i>Current Projects</h3>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-success"><i class="fas fa-check me-2"></i>Working Edit & Delete Buttons</span>
+                        <button class="btn btn-primary" onclick="loadProjects()">
+                            <i class="fas fa-sync me-2"></i>Load Projects
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Description</th>
+                                    <th>Technologies</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsList">
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">
+                                        <i class="fas fa-info-circle me-2"></i>Click "Load Projects" to see your projects with working edit/delete buttons
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Blog Posts Manager -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-blog text-info me-2"></i>Current Blog Posts</h3>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-success"><i class="fas fa-check me-2"></i>Working Edit & Delete Buttons</span>
+                        <button class="btn btn-primary" onclick="loadBlogPosts()">
+                            <i class="fas fa-sync me-2"></i>Load Blog Posts
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Excerpt</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blogPostsList">
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">
+                                        <i class="fas fa-info-circle me-2"></i>Click "Load Blog Posts" to see your posts with working edit/delete buttons
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Videos Manager -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-video text-danger me-2"></i>Current Videos</h3>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-success"><i class="fas fa-check me-2"></i>Working Edit & Delete Buttons</span>
+                        <button class="btn btn-primary" onclick="loadVideos()">
+                            <i class="fas fa-sync me-2"></i>Load Videos
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Platform</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="videosList">
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">
+                                        <i class="fas fa-info-circle me-2"></i>Click "Load Videos" to see your videos with working edit/delete buttons
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Edit Modal -->
+                <div class="modal fade" id="editModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editModalTitle">Edit Content</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" id="editModalBody">
+                                <!-- Dynamic content will be loaded here -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" id="saveChangesBtn">
+                                    <i class="fas fa-save me-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Upload Modal -->
+                <div class="modal fade" id="uploadModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="uploadModalTitle">Upload File</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="upload-area border-2 border-dashed border-primary rounded p-4 text-center" id="uploadArea">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                    <h5>Drag & Drop or Click to Upload</h5>
+                                    <p class="text-muted mb-3">Maximum file size: 50MB</p>
+                                    <input type="file" id="fileInput" class="d-none" accept="">
+                                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                                        <i class="fas fa-folder-open me-2"></i>Choose File
+                                    </button>
+                                    <button class="btn btn-secondary mt-2" onclick="testUpload()">
+                                        <i class="fas fa-vial me-2"></i>Test Connection
+                                    </button>
+                                </div>
+                                <div class="upload-progress mt-3 d-none">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <small class="text-muted mt-1 d-block">Uploading...</small>
+                                </div>
+                                <div class="upload-result mt-3 d-none">
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <span id="uploadResultText">File uploaded successfully!</span>
+                                    </div>
+                                    <div class="uploaded-file-preview" id="uploadedFilePreview"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary d-none" id="useUploadedFileBtn">
+                                    <i class="fas fa-check me-2"></i>Use This File
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-tools text-warning me-2"></i>Quick File Actions</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <button class="btn btn-info w-100 mb-2" onclick="openFileInstructions('views/projects.ejs')">
+                                <i class="fas fa-folder-open me-2"></i>Open Projects File
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-warning w-100 mb-2" onclick="openFileInstructions('views/blog.ejs')">
+                                <i class="fas fa-folder-open me-2"></i>Open Blog File
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success w-100 mb-2" onclick="clearAllProjects()">
+                                <i class="fas fa-broom me-2"></i>Clear All Projects
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GLOBAL SETTINGS PANEL -->
+            <div class="tab-pane fade" id="global-panel" role="tabpanel">
+                <h2 class="mb-4"><i class="fas fa-cog text-primary me-2"></i>Global Settings</h2>
+
+                <!-- Website Branding -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-tag text-success me-2"></i>Website Branding</h3>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Change "AI Student" to your own branding</strong><br>
+                        This will update the navigation bar, footer, and page titles across your entire website.
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Website Name/Brand</label>
+                                <input type="text" class="form-control" id="websiteName" placeholder="e.g., John Smith, TechExplorer, DataWiz">
+                                <small class="text-muted">This replaces "AI Student" in navigation and footer</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Website Tagline</label>
+                                <input type="text" class="form-control" id="websiteTagline" placeholder="e.g., Exploring the frontiers of AI">
+                                <small class="text-muted">Appears in footer and page descriptions</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Portfolio Title</label>
+                                <input type="text" class="form-control" id="portfolioTitle" placeholder="e.g., John Smith Portfolio">
+                                <small class="text-muted">Used in page titles and footer</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Copyright Name</label>
+                                <input type="text" class="form-control" id="copyrightName" placeholder="e.g., John Smith">
+                                <small class="text-muted">For footer copyright text</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="preview-box">
+                        <strong>Preview:</strong>
+                        <div class="d-flex justify-content-between align-items-center p-2 bg-dark text-white rounded mb-2">
+                            <span><i class="fas fa-robot me-2"></i><span id="brandPreview">Your Brand Name</span></span>
+                            <small>Navigation Bar</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center p-2 bg-secondary text-white rounded">
+                            <div>
+                                <strong><i class="fas fa-robot me-2"></i><span id="portfolioPreview">Your Portfolio Title</span></strong><br>
+                                <small id="taglinePreview">Your tagline here...</small>
+                            </div>
+                            <small>Footer</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-primary btn-lg" onclick="generateBrandingCode()">
+                            <i class="fas fa-code me-2"></i>Generate Code
+                        </button>
+                        <button class="btn btn-success btn-lg" onclick="autoUpdateBranding()">
+                            <i class="fas fa-magic me-2"></i>Auto-Update All Files
+                        </button>
+                        <button class="btn btn-info btn-lg" onclick="checkNameAvailability()">
+                            <i class="fas fa-search me-2"></i>Check Availability
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-tools text-warning me-2"></i>Quick Actions</h3>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <button class="btn btn-info w-100 mb-2" onclick="showColorCustomizer()">
+                                <i class="fas fa-palette me-2"></i>Customize Colors
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-secondary w-100 mb-2" onclick="backupWebsite()">
+                                <i class="fas fa-download me-2"></i>Backup Website
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-danger w-100 mb-2" onclick="showDeployGuide()">
+                                <i class="fas fa-rocket me-2"></i>Deploy Guide
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success w-100 mb-2" onclick="generateAllCode()">
+                                <i class="fas fa-code me-2"></i>Generate All Code
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End tab-content -->
+    </div> <!-- End container -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Live preview updates
+        document.getElementById('heroName').addEventListener('input', function() {
+            document.getElementById('heroNamePreview').textContent = this.value || 'Your Name';
+        });
+
+        document.getElementById('heroDescription').addEventListener('input', function() {
+            document.getElementById('heroDescPreview').textContent = this.value || 'Your description will appear here...';
+        });
+
+        // Set today's date as default for blog
+        document.getElementById('newBlogDate').value = new Date().toISOString().split('T')[0];
+
+        // Live preview for branding
+        document.getElementById('websiteName').addEventListener('input', function() {
+            document.getElementById('brandPreview').textContent = this.value || 'Your Brand Name';
+        });
+
+        document.getElementById('portfolioTitle').addEventListener('input', function() {
+            document.getElementById('portfolioPreview').textContent = this.value || 'Your Portfolio Title';
+        });
+
+        document.getElementById('websiteTagline').addEventListener('input', function() {
+            document.getElementById('taglinePreview').textContent = this.value || 'Your tagline here...';
+        });
+
+        // Homepage code generation
+        function generateHomepageCode() {
+            const heroData = {
+                name: document.getElementById('heroName').value,
+                title: document.getElementById('heroTitle').value,
+                description: document.getElementById('heroDescription').value
+            };
+
+            const homepageHTML = generateHomepageHTML(heroData);
+            showCodeModal('Homepage Code', homepageHTML, 'Replace the corresponding sections in views/index.ejs');
+        }
+
+        function generateHomepageHTML(hero) {
+            return `
+<!-- Hero Section Update -->
+<h1 class="display-4 fw-bold mb-4">
+    Hello, I'm <span class="text-warning">${hero.name || 'Your Name'}</span>
+</h1>
+<p class="lead mb-4">
+    ${hero.description || 'Your description here...'}
+</p>`;
+        }
+
+        // About page code generation
+        function generateAboutCode() {
+            const aboutData = {
+                heading: document.getElementById('aboutHeading').value,
+                para1: document.getElementById('aboutPara1').value
+            };
+
+            const aboutHTML = generateAboutHTML(aboutData);
+            showCodeModal('About Page Code', aboutHTML, 'Replace the corresponding sections in views/about.ejs');
+        }
+
+        function generateAboutHTML(data) {
+            return `
+<!-- About Page Updates -->
+<h2 class="mb-4">${data.heading}</h2>
+<p class="mb-4">${data.para1}</p>`;
+        }
+
+        // Projects page code generation
+        function generateNewProjectCode() {
+            const projectData = {
+                name: document.getElementById('newProjectName').value,
+                icon: document.getElementById('newProjectIcon').value,
+                description: document.getElementById('newProjectDescription').value,
+                technologies: document.getElementById('newProjectTech').value.split(',').map(t => t.trim()),
+                github: document.getElementById('newProjectGithub').value,
+                image: document.getElementById('newProjectImage').value,
+                video: document.getElementById('newProjectVideo').value
+            };
+
+            if (!projectData.name || !projectData.description) {
+                alert('Please fill in at least the project name and description.');
+                return;
+            }
+
+            const projectHTML = generateProjectHTML(projectData);
+            showCodeModal('New Project Code', projectHTML, 'Add this to your views/projects.ejs file in the projects grid section.');
+        }
+
+        function generateProjectHTML(data) {
+            const techBadges = data.technologies.map(tech =>
+                `<span class="badge bg-primary me-2">${tech}</span>`
+            ).join('');
+
+            // Generate image section if image URL provided
+            const imageSection = data.image ? `
+                <div class="project-image mb-3">
+                    <img src="${data.image}" class="img-fluid rounded" alt="${data.name} Screenshot" style="max-height: 200px; width: 100%; object-fit: cover;">
+                </div>` : '';
+
+            // Generate video section if video URL provided
+            const videoSection = data.video ? `
+                <div class="project-video mb-3">
+                    <div class="ratio ratio-16x9">
+                        ${data.video.includes('youtube.com') || data.video.includes('youtu.be') ?
+                            `<iframe src="${convertToEmbedUrl(data.video)}" allowfullscreen></iframe>` :
+                            data.video.includes('vimeo.com') ?
+                            `<iframe src="${data.video.replace('vimeo.com/', 'player.vimeo.com/video/')}" allowfullscreen></iframe>` :
+                            `<video controls class="w-100"><source src="${data.video}" type="video/mp4"></video>`
+                        }
+                    </div>
+                </div>` : '';
+
+            return `
+<!-- ${data.name} Project -->
+<div class="col-lg-4 col-md-6">
+    <div class="project-card">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="${data.icon || 'fas fa-code'} me-2"></i>${data.name}
+                </h5>
+            </div>
+            <div class="card-body">
+                ${imageSection}
+                ${videoSection}
+                <p class="card-text">
+                    ${data.description}
+                </p>
+                <div class="mb-3">
+                    ${techBadges}
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                    ${data.github ? `<a href="${data.github}" class="btn btn-outline-primary btn-sm">
+                        <i class="fab fa-github me-1"></i>Code
+                    </a>` : '<span class="badge bg-secondary">Code Coming Soon</span>'}
+                    <div class="project-media-badges">
+                        ${data.image ? '<span class="badge bg-success me-1"><i class="fas fa-image"></i></span>' : ''}
+                        ${data.video ? '<span class="badge bg-danger"><i class="fas fa-video"></i></span>' : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`;
+        }
+
+        // Helper function to convert YouTube URLs to embed format
+        function convertToEmbedUrl(url) {
+            if (url.includes('youtube.com/watch?v=')) {
+                const videoId = url.split('v=')[1].split('&')[0];
+                return `https://www.youtube.com/embed/${videoId}`;
+            } else if (url.includes('youtu.be/')) {
+                const videoId = url.split('youtu.be/')[1].split('?')[0];
+                return `https://www.youtube.com/embed/${videoId}`;
+            }
+            return url;
+        }
+
+        // Blog page code generation
+        function generateNewBlogCode() {
+            const blogData = {
+                title: document.getElementById('newBlogTitle').value,
+                category: document.getElementById('newBlogCategory').value,
+                excerpt: document.getElementById('newBlogExcerpt').value,
+                tags: document.getElementById('newBlogTags').value.split(',').map(t => t.trim()),
+                date: document.getElementById('newBlogDate').value
+            };
+
+            if (!blogData.title || !blogData.excerpt) {
+                alert('Please fill in at least the blog title and excerpt.');
+                return;
+            }
+
+            const blogHTML = generateBlogHTML(blogData);
+            showCodeModal('New Blog Post Code', blogHTML, 'Add this to your views/blog.ejs file in the blog posts section.');
+        }
+
+        function generateBlogHTML(data) {
+            const tagBadges = data.tags.map(tag =>
+                `<span class="badge bg-secondary me-1">${tag}</span>`
+            ).join('');
+
+            const formattedDate = new Date(data.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            const categoryColors = {
+                'Machine Learning': 'primary',
+                'Natural Language Processing': 'success',
+                'Computer Vision': 'info',
+                'Learning Journey': 'warning',
+                'Tutorial': 'danger'
+            };
+
+            return `
+<!-- ${data.title} Blog Post -->
+<article class="blog-post mb-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <span class="badge bg-${categoryColors[data.category] || 'primary'}">${data.category}</span>
+                <small class="text-muted">
+                    <i class="fas fa-calendar me-1"></i>${formattedDate}
+                </small>
+            </div>
+            <h2 class="card-title h4">
+                <a href="#" class="text-decoration-none">${data.title}</a>
+            </h2>
+            <p class="card-text">
+                ${data.excerpt}
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="blog-tags">
+                    ${tagBadges}
+                </div>
+                <a href="#" class="btn btn-outline-primary btn-sm">
+                    Read More <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</article>`;
+        }
+
+        // Branding code generation
+        function generateBrandingCode() {
+            const brandingData = {
+                websiteName: document.getElementById('websiteName').value,
+                tagline: document.getElementById('websiteTagline').value,
+                portfolioTitle: document.getElementById('portfolioTitle').value,
+                copyrightName: document.getElementById('copyrightName').value
+            };
+
+            if (!brandingData.websiteName) {
+                alert('Please enter at least a website name/brand.');
+                return;
+            }
+
+            const brandingInstructions = generateBrandingInstructions(brandingData);
+            showCodeModal('Website Branding Updates', brandingInstructions, 'Follow these steps to update your website branding across all pages');
+        }
+
+        function generateBrandingInstructions(data) {
+            return `
+🏷️ WEBSITE BRANDING UPDATE INSTRUCTIONS
+
+📍 STEP 1: Update Navigation Bar (All Pages)
+Files to edit: views/index.ejs, views/about.ejs, views/projects.ejs, views/blog.ejs, views/contact.ejs
+
+Find this line (around line 20 in each file):
+<i class="fas fa-robot me-2"></i>AI Student
+
+Replace with:
+<i class="fas fa-robot me-2"></i>${data.websiteName}
+
+📍 STEP 2: Update Footer (All Pages)
+Find these lines in the footer section (around line 127 in each file):
+
+OLD:
+<h5><i class="fas fa-robot me-2"></i>AI Student Portfolio</h5>
+<p class="mb-0">Exploring the frontiers of Artificial Intelligence</p>
+<p class="mb-0 mt-2">&copy; 2024 AI Student. All rights reserved.</p>
+
+NEW:
+<h5><i class="fas fa-robot me-2"></i>${data.portfolioTitle || data.websiteName + ' Portfolio'}</h5>
+<p class="mb-0">${data.tagline || 'Exploring the frontiers of Artificial Intelligence'}</p>
+<p class="mb-0 mt-2">&copy; 2024 ${data.copyrightName || data.websiteName}. All rights reserved.</p>
+
+📍 STEP 3: Update Page Titles
+In each EJS file, find the <title> tag and update:
+
+OLD: <title>About - AI Student Portfolio</title>
+NEW: <title>About - ${data.portfolioTitle || data.websiteName + ' Portfolio'}</title>
+
+📍 STEP 4: Update Configuration File
+Edit config/site-config.js:
+
+Line 8: title: "${data.websiteName}",
+Line 68: title: "${data.portfolioTitle || data.websiteName + ' Portfolio'}",
+Line 69: description: "${data.tagline || 'Exploring the frontiers of Artificial Intelligence'}",
+Line 70: copyright: "2024 ${data.copyrightName || data.websiteName}. All rights reserved.",
+
+📍 STEP 5: Update CSS Comments (Optional)
+Edit public/css/style.css:
+Line 1: /* Custom CSS for ${data.websiteName} Portfolio */
+
+📍 STEP 6: Update JavaScript Comments (Optional)
+Edit public/js/main.js:
+Line 1: // Main JavaScript for ${data.websiteName} Portfolio
+Line 68: 🤖 Welcome to ${data.websiteName} Portfolio!
+
+📍 STEP 7: Update README.md (Optional)
+Edit README.md:
+Line 1: # 🤖 ${data.websiteName} Portfolio Website
+
+✅ After making these changes:
+1. Save all files
+2. Restart your server (Ctrl+C then npm start)
+3. Refresh your browser to see the changes
+
+🎯 Files to edit (in order of importance):
+1. views/index.ejs (line 20, 127-129)
+2. views/about.ejs (line 20, 127-129)
+3. views/projects.ejs (line 20, 273-275)
+4. views/blog.ejs (line 20, 319-321)
+5. views/contact.ejs (line 20, 266-268)
+6. config/site-config.js (lines 8, 68-70)`;
+        }
+
+        // Contact page code generation
+        function generateContactCode() {
+            const contactData = {
+                email: document.getElementById('contactEmail').value,
+                location: document.getElementById('contactLocation').value,
+                github: document.getElementById('contactGithub').value,
+                linkedin: document.getElementById('contactLinkedin').value
+            };
+
+            const contactHTML = generateContactHTML(contactData);
+            showCodeModal('Contact Page Code', contactHTML, 'Replace the corresponding sections in views/contact.ejs');
+        }
+
+        function generateContactHTML(data) {
+            return `
+<!-- Contact Page Updates -->
+<div class="contact-item mb-3">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-envelope text-primary me-3"></i>
+        <div>
+            <strong>Email</strong><br>
+            <a href="mailto:${data.email}">${data.email}</a>
+        </div>
+    </div>
+</div>
+
+<div class="contact-item mb-3">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-map-marker-alt text-primary me-3"></i>
+        <div>
+            <strong>Location</strong><br>
+            <span class="text-muted">${data.location}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Social Links -->
+<div class="d-grid gap-2">
+    ${data.github ? `<a href="${data.github}" class="btn btn-outline-dark">
+        <i class="fab fa-github me-2"></i>GitHub
+    </a>` : ''}
+    ${data.linkedin ? `<a href="${data.linkedin}" class="btn btn-outline-primary">
+        <i class="fab fa-linkedin me-2"></i>LinkedIn
+    </a>` : ''}
+</div>`;
+        }
+
+        // Utility functions
+        function showCodeModal(title, code, instructions) {
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">${title}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>${instructions}
+                            </div>
+                            <pre class="bg-light p-3" style="max-height: 400px; overflow-y: auto;"><code>${code}</code></pre>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="copyToClipboard(\`${code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`)">
+                                <i class="fas fa-copy me-2"></i>Copy Code
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+
+            modal.addEventListener('hidden.bs.modal', () => {
+                document.body.removeChild(modal);
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.createElement('div');
+                toast.className = 'toast position-fixed top-0 end-0 m-3';
+                toast.innerHTML = `
+                    <div class="toast-body bg-success text-white">
+                        <i class="fas fa-check me-2"></i>Code copied to clipboard!
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                const toastInstance = new bootstrap.Toast(toast);
+                toastInstance.show();
+                setTimeout(() => document.body.removeChild(toast), 3000);
+            });
+        }
+
+        function generateAllCode() {
+            alert('This feature will generate code for all pages at once. Use the individual page generators for now.');
+        }
+
+        // Auto-update functions
+        async function autoUpdateHomepage() {
+            const heroData = {
+                name: document.getElementById('heroName').value,
+                description: document.getElementById('heroDescription').value,
+                photo: document.getElementById('heroPhoto').value
+            };
+
+            if (!heroData.name && !heroData.description) {
+                alert('Please fill in at least the name or description!');
+                return;
+            }
+
+            try {
+                showLoadingToast('Updating homepage files...');
+
+                const response = await fetch('/api/update-homepage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(heroData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('✅ Homepage updated successfully! Refresh your website to see changes.');
+                } else {
+                    showErrorToast('❌ Error: ' + result.message);
+                }
+            } catch (error) {
+                showErrorToast('❌ Failed to update files: ' + error.message);
+            }
+        }
+
+        async function autoUpdateBranding() {
+            const brandingData = {
+                websiteName: document.getElementById('websiteName').value,
+                tagline: document.getElementById('websiteTagline').value,
+                portfolioTitle: document.getElementById('portfolioTitle').value,
+                copyrightName: document.getElementById('copyrightName').value
+            };
+
+            if (!brandingData.websiteName) {
+                alert('Please enter at least a website name!');
+                return;
+            }
+
+            try {
+                showLoadingToast('Updating branding across all files...');
+
+                const response = await fetch('/api/update-branding', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(brandingData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('✅ Branding updated across all pages! Refresh your website to see changes.');
+                } else {
+                    showErrorToast('❌ Error: ' + result.message);
+                }
+            } catch (error) {
+                showErrorToast('❌ Failed to update files: ' + error.message);
+            }
+        }
+
+        async function autoUpdateAbout() {
+            const aboutData = {
+                heading: document.getElementById('aboutHeading').value,
+                para1: document.getElementById('aboutPara1').value,
+                photo1: document.getElementById('aboutPhoto1').value,
+                photo2: document.getElementById('aboutPhoto2').value,
+                photo3: document.getElementById('aboutPhoto3').value
+            };
+
+            if (!aboutData.heading && !aboutData.para1) {
+                alert('Please fill in at least the heading or paragraph!');
+                return;
+            }
+
+            try {
+                showLoadingToast('Updating about page...');
+
+                const response = await fetch('/api/update-about', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(aboutData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('✅ About page updated successfully! Refresh your website to see changes.');
+                } else {
+                    showErrorToast('❌ Error: ' + result.message);
+                }
+            } catch (error) {
+                showErrorToast('❌ Failed to update about page: ' + error.message);
+            }
+        }
+
+        async function autoAddProject() {
+            const projectData = {
+                name: document.getElementById('newProjectName').value,
+                icon: document.getElementById('newProjectIcon').value,
+                description: document.getElementById('newProjectDescription').value,
+                technologies: document.getElementById('newProjectTech').value,
+                github: document.getElementById('newProjectGithub').value,
+                image: document.getElementById('newProjectImage').value,
+                video: document.getElementById('newProjectVideo').value,
+                color: 'primary',
+                status: 'In Progress'
+            };
+
+            if (!projectData.name || !projectData.description) {
+                alert('Please fill in at least the project name and description!');
+                return;
+            }
+
+            try {
+                showLoadingToast('Adding new project...');
+
+                const response = await fetch('/api/add-project', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(projectData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('✅ Project added successfully! Refresh your website to see the new project.');
+                    // Clear the form
+                    document.getElementById('newProjectName').value = '';
+                    document.getElementById('newProjectDescription').value = '';
+                    document.getElementById('newProjectTech').value = '';
+                    document.getElementById('newProjectGithub').value = '';
+                } else {
+                    showErrorToast('❌ Error: ' + result.message);
+                }
+            } catch (error) {
+                showErrorToast('❌ Failed to add project: ' + error.message);
+            }
+        }
+
+        async function autoAddBlog() {
+            const blogData = {
+                title: document.getElementById('newBlogTitle').value,
+                category: document.getElementById('newBlogCategory').value,
+                excerpt: document.getElementById('newBlogExcerpt').value,
+                tags: document.getElementById('newBlogTags').value,
+                date: document.getElementById('newBlogDate').value,
+                readTime: '5',
+                level: 'Beginner'
+            };
+
+            if (!blogData.title || !blogData.excerpt) {
+                alert('Please fill in at least the blog title and excerpt!');
+                return;
+            }
+
+            try {
+                showLoadingToast('Adding new blog post...');
+
+                const response = await fetch('/api/add-blog', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(blogData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('✅ Blog post added successfully! Refresh your website to see the new post.');
+                    // Clear the form
+                    document.getElementById('newBlogTitle').value = '';
+                    document.getElementById('newBlogExcerpt').value = '';
+                    document.getElementById('newBlogTags').value = '';
+                } else {
+                    showErrorToast('❌ Error: ' + result.message);
+                }
+            } catch (error) {
+                showErrorToast('❌ Failed to add blog post: ' + error.message);
+            }
+        }
+
+        async function autoUpdateContact() {
+            const contactData = {
+                email: document.getElementById('contactEmail').value,
+                location: document.getElementById('contactLocation').value,
+                github: document.getElementById('contactGithub').value,
+                linkedin: document.getElementById('contactLinkedin').value
+            };
+
+            if (!contactData.email && !contactData.location) {
+                alert('Please fill in at least the email or location!');
+                return;
+            }
+
+            try {
+                showLoadingToast('Updating contact page...');
+
+                const response = await fetch('/api/update-contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(contactData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('✅ Contact page updated successfully! Refresh your website to see changes.');
+                } else {
+                    showErrorToast('❌ Error: ' + result.message);
+                }
+            } catch (error) {
+                showErrorToast('❌ Failed to update contact page: ' + error.message);
+            }
+        }
+
+        // Load and manage projects
+        async function loadProjects() {
+            try {
+                console.log('📂 Loading projects...');
+                showLoadingToast('Loading projects...');
+
+                const response = await fetch('/api/projects');
+                console.log('📡 Load response status:', response.status);
+
+                const result = await response.json();
+                console.log('📋 Load response data:', result);
+
+                if (result.success) {
+                    console.log('✅ Found', result.projects.length, 'projects');
+                    displayProjects(result.projects);
+                    showSuccessToast(`✅ Loaded ${result.projects.length} projects successfully!`);
+                } else {
+                    console.error('❌ Load error:', result.message);
+                    showErrorToast('❌ Error loading projects: ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Load exception:', error);
+                showErrorToast('❌ Failed to load projects: ' + error.message);
+            }
+        }
+
+        function displayProjects(projects) {
+            currentProjects = projects; // Store for editing
+            const tbody = document.getElementById('projectsList');
+
+            if (projects.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            <i class="fas fa-info-circle me-2"></i>No projects found. Add some projects first!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = projects.map((project, index) => `
+                <tr>
+                    <td><strong>${project.name}</strong></td>
+                    <td>${project.description.substring(0, 100)}${project.description.length > 100 ? '...' : ''}</td>
+                    <td>
+                        ${project.technologies.map(tech => `<span class="badge bg-primary me-1">${tech}</span>`).join('')}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning me-2" onclick="editProject(${index})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteProject(${index})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteProject(projectId) {
+            console.log('🗑️ Delete button clicked for project ID:', projectId);
+
+            if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+                console.log('❌ User cancelled deletion');
+                return;
+            }
+
+            try {
+                console.log('🚀 Starting deletion process...');
+                showLoadingToast('Deleting project...');
+
+                const response = await fetch(`/api/projects/${projectId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('📡 Response status:', response.status);
+                const result = await response.json();
+                console.log('📋 Response data:', result);
+
+                if (result.success) {
+                    showSuccessToast('✅ Project deleted successfully!');
+                    console.log('✅ Reloading projects list...');
+                    loadProjects(); // Reload the list
+                } else {
+                    showErrorToast('❌ Error deleting project: ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Delete error:', error);
+                showErrorToast('❌ Failed to delete project: ' + error.message);
+            }
+        }
+
+        let currentProjects = [];
+        let currentEditId = null;
+        let currentEditType = null;
+
+        function editProject(projectId) {
+            console.log('✏️ Edit button clicked for project ID:', projectId);
+
+            if (!currentProjects[projectId]) {
+                showErrorToast('❌ Project not found for editing');
+                return;
+            }
+
+            const project = currentProjects[projectId];
+            currentEditId = projectId;
+            currentEditType = 'project';
+
+            // Create edit form
+            const editForm = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Project Name</label>
+                            <input type="text" class="form-control" id="editProjectName" value="${project.name}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Icon Class</label>
+                            <input type="text" class="form-control" id="editProjectIcon" value="fas fa-code" placeholder="fas fa-code">
+                            <small class="text-muted">Font Awesome icon class</small>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="editProjectDescription" rows="3">${project.description}</textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Technologies (comma-separated)</label>
+                            <input type="text" class="form-control" id="editProjectTech" value="${project.technologies.join(', ')}">
+                            <small class="text-muted">e.g., Python, Machine Learning, TensorFlow</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">GitHub URL (optional)</label>
+                            <input type="url" class="form-control" id="editProjectGithub" placeholder="https://github.com/username/project">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">📸 Project Image</label>
+                            <div class="input-group">
+                                <input type="url" class="form-control" id="editProjectImage" placeholder="https://example.com/screenshot.jpg">
+                                <button class="btn btn-outline-primary" type="button" onclick="showImageUpload('editProjectImage')">
+                                    <i class="fas fa-upload"></i> Upload
+                                </button>
+                            </div>
+                            <small class="text-muted">Enter URL or upload image file</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">🎬 Demo Video</label>
+                            <div class="input-group">
+                                <input type="url" class="form-control" id="editProjectVideo" placeholder="https://youtube.com/watch?v=...">
+                                <button class="btn btn-outline-danger" type="button" onclick="showVideoUpload('editProjectVideo')">
+                                    <i class="fas fa-upload"></i> Upload
+                                </button>
+                            </div>
+                            <small class="text-muted">Enter URL or upload video file</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('editModalTitle').textContent = 'Edit Project: ' + project.name;
+            document.getElementById('editModalBody').innerHTML = editForm;
+
+            const modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+        }
+
+        // Load and manage blog posts
+        async function loadBlogPosts() {
+            try {
+                showLoadingToast('Loading blog posts...');
+
+                const response = await fetch('/api/blog-posts');
+                const result = await response.json();
+
+                if (result.success) {
+                    displayBlogPosts(result.posts);
+                    showSuccessToast('✅ Blog posts loaded successfully!');
+                } else {
+                    showErrorToast('❌ Error loading blog posts: ' + result.message);
+                }
+            } catch (error) {
+                showErrorToast('❌ Failed to load blog posts: ' + error.message);
+            }
+        }
+
+        function displayBlogPosts(posts) {
+            currentBlogPosts = posts; // Store for editing
+            const tbody = document.getElementById('blogPostsList');
+
+            if (posts.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            <i class="fas fa-info-circle me-2"></i>No blog posts found. Add some blog posts first!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = posts.map((post, index) => `
+                <tr>
+                    <td><strong>${post.title}</strong></td>
+                    <td><span class="badge bg-primary">${post.category}</span></td>
+                    <td>${post.excerpt.substring(0, 100)}${post.excerpt.length > 100 ? '...' : ''}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning me-2" onclick="editBlogPost(${index})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteBlogPost(${index})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteBlogPost(postId) {
+            if (!confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                showLoadingToast('Deleting blog post...');
+
+                const response = await fetch(`/api/blog-posts/${postId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('✅ Blog post deleted successfully!');
+                    loadBlogPosts(); // Reload the list
+                } else {
+                    showErrorToast('❌ Error deleting blog post: ' + result.message);
+                }
+            } catch (error) {
+                showErrorToast('❌ Failed to delete blog post: ' + error.message);
+            }
+        }
+
+        let currentBlogPosts = [];
+
+        function editBlogPost(postId) {
+            console.log('✏️ Edit button clicked for blog post ID:', postId);
+
+            if (!currentBlogPosts[postId]) {
+                showErrorToast('❌ Blog post not found for editing');
+                return;
+            }
+
+            const post = currentBlogPosts[postId];
+            currentEditId = postId;
+            currentEditType = 'blog';
+
+            // Create edit form
+            const editForm = `
+                <div class="mb-3">
+                    <label class="form-label">Blog Title</label>
+                    <input type="text" class="form-control" id="editBlogTitle" value="${post.title}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Category</label>
+                    <select class="form-control" id="editBlogCategory">
+                        <option value="Machine Learning" ${post.category === 'Machine Learning' ? 'selected' : ''}>Machine Learning</option>
+                        <option value="Natural Language Processing" ${post.category === 'Natural Language Processing' ? 'selected' : ''}>Natural Language Processing</option>
+                        <option value="Computer Vision" ${post.category === 'Computer Vision' ? 'selected' : ''}>Computer Vision</option>
+                        <option value="Learning Journey" ${post.category === 'Learning Journey' ? 'selected' : ''}>Learning Journey</option>
+                        <option value="Tutorial" ${post.category === 'Tutorial' ? 'selected' : ''}>Tutorial</option>
+                        <option value="Research" ${post.category === 'Research' ? 'selected' : ''}>Research</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Excerpt</label>
+                    <textarea class="form-control" id="editBlogExcerpt" rows="4">${post.excerpt}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tags (comma-separated)</label>
+                    <input type="text" class="form-control" id="editBlogTags" placeholder="AI, Machine Learning, Python">
+                    <small class="text-muted">e.g., AI, Machine Learning, Python</small>
+                </div>
+            `;
+
+            document.getElementById('editModalTitle').textContent = 'Edit Blog Post: ' + post.title;
+            document.getElementById('editModalBody').innerHTML = editForm;
+
+            const modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+        }
+
+        // Save changes functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-load content when the manage tab is shown
+            const manageTab = document.querySelector('button[data-bs-target="#manage-panel"]');
+            if (manageTab) {
+                manageTab.addEventListener('shown.bs.tab', function() {
+                    loadProjects();
+                    loadBlogPosts();
+                });
+            }
+
+            // Save changes button functionality
+            document.getElementById('saveChangesBtn').addEventListener('click', async function() {
+                if (currentEditType === 'project') {
+                    await saveProjectChanges();
+                } else if (currentEditType === 'blog') {
+                    await saveBlogChanges();
+                }
+            });
+        });
+
+        async function saveProjectChanges() {
+            try {
+                const updatedProject = {
+                    name: document.getElementById('editProjectName').value,
+                    description: document.getElementById('editProjectDescription').value,
+                    technologies: document.getElementById('editProjectTech').value.split(',').map(t => t.trim()),
+                    icon: document.getElementById('editProjectIcon').value || 'fas fa-code',
+                    github: document.getElementById('editProjectGithub').value,
+                    image: document.getElementById('editProjectImage').value,
+                    video: document.getElementById('editProjectVideo').value
+                };
+
+                if (!updatedProject.name || !updatedProject.description) {
+                    showErrorToast('❌ Please fill in at least the project name and description');
+                    return;
+                }
+
+                console.log('💾 Saving project changes:', updatedProject);
+                showLoadingToast('Saving project changes...');
+
+                const response = await fetch(`/api/projects/${currentEditId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedProject)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('✅ Project updated successfully!');
+                    bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                    loadProjects(); // Reload the list
+                } else {
+                    showErrorToast('❌ Error updating project: ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Save error:', error);
+                showErrorToast('❌ Failed to save project: ' + error.message);
+            }
+        }
+
+        async function saveBlogChanges() {
+            try {
+                const updatedPost = {
+                    title: document.getElementById('editBlogTitle').value,
+                    category: document.getElementById('editBlogCategory').value,
+                    excerpt: document.getElementById('editBlogExcerpt').value,
+                    tags: document.getElementById('editBlogTags').value.split(',').map(t => t.trim())
+                };
+
+                if (!updatedPost.title || !updatedPost.excerpt) {
+                    showErrorToast('❌ Please fill in at least the title and excerpt');
+                    return;
+                }
+
+                console.log('💾 Saving blog post changes:', updatedPost);
+                showLoadingToast('Saving blog post changes...');
+
+                const response = await fetch(`/api/blog-posts/${currentEditId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedPost)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('✅ Blog post updated successfully!');
+                    bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                    loadBlogPosts(); // Reload the list
+                } else {
+                    showErrorToast('❌ Error updating blog post: ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Save error:', error);
+                showErrorToast('❌ Failed to save blog post: ' + error.message);
+            }
+        }
+
+        // Test function to check if JavaScript is working
+        function testButton(targetId) {
+            console.log('🧪 Test button clicked for:', targetId);
+            alert('Button clicked! Target: ' + targetId);
+
+            // Try to show the upload modal
+            try {
+                showImageUpload(targetId);
+            } catch (error) {
+                console.error('❌ Error calling showImageUpload:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // About photo upload function
+        async function uploadAboutPhoto(input, targetId) {
+            console.log('📸 About photo upload triggered for:', targetId);
+
+            if (!input.files || input.files.length === 0) {
+                console.log('❌ No file selected');
+                return;
+            }
+
+            const file = input.files[0];
+            console.log('📁 File selected:', {
+                name: file.name,
+                type: file.type,
+                size: file.size
+            });
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showErrorToast('❌ Please select an image file (JPG, PNG, GIF, WebP)');
+                return;
+            }
+
+            // Validate file size (50MB limit)
+            if (file.size > 50 * 1024 * 1024) {
+                showErrorToast('❌ File too large. Maximum size is 50MB');
+                return;
+            }
+
+            try {
+                showLoadingToast('📸 Uploading about page photo...');
+
+                const formData = new FormData();
+                formData.append('image', file);
+
+                console.log('🚀 Sending about photo upload request...');
+                const response = await fetch('/api/upload-image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('📡 Response status:', response.status);
+                const result = await response.json();
+                console.log('📋 Response data:', result);
+
+                if (result.success) {
+                    document.getElementById(targetId).value = result.imageUrl;
+                    showSuccessToast('✅ About page photo uploaded successfully!');
+                    console.log('✅ About photo URL set to:', result.imageUrl);
+                } else {
+                    showErrorToast('❌ Upload failed: ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ About photo upload error:', error);
+                showErrorToast('❌ Upload failed: ' + error.message);
+            }
+        }
+
+        // Hero photo upload function
+        async function uploadHeroPhoto(input) {
+            console.log('📸 Hero photo upload triggered');
+
+            if (!input.files || input.files.length === 0) {
+                console.log('❌ No file selected');
+                return;
+            }
+
+            const file = input.files[0];
+            console.log('📁 File selected:', {
+                name: file.name,
+                type: file.type,
+                size: file.size
+            });
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showErrorToast('❌ Please select an image file (JPG, PNG, GIF, WebP)');
+                return;
+            }
+
+            // Validate file size (50MB limit)
+            if (file.size > 50 * 1024 * 1024) {
+                showErrorToast('❌ File too large. Maximum size is 50MB');
+                return;
+            }
+
+            try {
+                showLoadingToast('📸 Uploading your profile photo...');
+
+                const formData = new FormData();
+                formData.append('image', file);
+
+                console.log('🚀 Sending hero photo upload request...');
+                const response = await fetch('/api/upload-image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('📡 Response status:', response.status);
+                const result = await response.json();
+                console.log('📋 Response data:', result);
+
+                if (result.success) {
+                    document.getElementById('heroPhoto').value = result.imageUrl;
+                    showSuccessToast('✅ Profile photo uploaded successfully!');
+                    console.log('✅ Hero photo URL set to:', result.imageUrl);
+                } else {
+                    showErrorToast('❌ Upload failed: ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Hero photo upload error:', error);
+                showErrorToast('❌ Upload failed: ' + error.message);
+            }
+        }
+
+        // Direct upload function (bypass modal)
+        async function directUpload(input) {
+            console.log('📤 Direct upload triggered');
+
+            if (!input.files || input.files.length === 0) {
+                console.log('❌ No file selected');
+                return;
+            }
+
+            const file = input.files[0];
+            console.log('📁 File selected:', {
+                name: file.name,
+                type: file.type,
+                size: file.size
+            });
+
+            try {
+                showLoadingToast('Uploading photo...');
+
+                const formData = new FormData();
+                formData.append('image', file);
+
+                console.log('🚀 Sending direct upload request...');
+                const response = await fetch('/api/upload-image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('📡 Response status:', response.status);
+                const result = await response.json();
+                console.log('📋 Response data:', result);
+
+                if (result.success) {
+                    document.getElementById('heroPhoto').value = result.imageUrl;
+                    showSuccessToast('✅ Photo uploaded successfully!');
+                    console.log('✅ Photo URL set to:', result.imageUrl);
+                } else {
+                    showErrorToast('❌ Upload failed: ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Direct upload error:', error);
+                showErrorToast('❌ Upload failed: ' + error.message);
+            }
+        }
+
+        // File upload functionality
+        let currentTargetInput = null;
+        let currentUploadType = null;
+
+        // Test upload connection
+        async function testUpload() {
+            try {
+                console.log('🧪 Testing upload connection...');
+                showLoadingToast('Testing connection...');
+
+                const response = await fetch('/api/test-upload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                console.log('🧪 Test result:', result);
+
+                if (result.success) {
+                    showSuccessToast('✅ Connection working! Upload should work.');
+                } else {
+                    showErrorToast('❌ Connection test failed: ' + result.message);
+                }
+            } catch (error) {
+                console.error('🧪 Test error:', error);
+                showErrorToast('❌ Connection test failed: ' + error.message);
+            }
+        }
+
+        function showImageUpload(targetInputId) {
+            try {
+                console.log('🖼️ showImageUpload called for:', targetInputId);
+                currentTargetInput = targetInputId;
+                currentUploadType = 'image';
+
+                // Check if modal exists
+                const modalElement = document.getElementById('uploadModal');
+                if (!modalElement) {
+                    console.error('❌ Upload modal not found!');
+                    alert('Upload modal not found! Using direct upload instead.');
+                    return;
+                }
+                console.log('✅ Modal element found');
+
+                // Set modal content based on target
+                try {
+                    if (targetInputId === 'heroPhoto') {
+                        document.getElementById('uploadModalTitle').textContent = 'Upload Profile Photo';
+                        document.querySelector('#uploadArea h5').textContent = 'Upload Your Profile Photo';
+                        document.querySelector('#uploadArea p').textContent = 'Professional headshot for homepage (JPG, PNG, GIF, WebP - Max: 50MB)';
+                    } else if (targetInputId.startsWith('aboutPhoto')) {
+                        document.getElementById('uploadModalTitle').textContent = 'Upload About Page Photo';
+                        document.querySelector('#uploadArea h5').textContent = 'Upload About Page Photo';
+                        document.querySelector('#uploadArea p').textContent = 'Personal photo for your story (JPG, PNG, GIF, WebP - Max: 50MB)';
+                    } else {
+                        document.getElementById('uploadModalTitle').textContent = 'Upload Project Image';
+                        document.querySelector('#uploadArea h5').textContent = 'Upload Project Image';
+                        document.querySelector('#uploadArea p').textContent = 'Supported formats: JPG, PNG, GIF, WebP (Max: 50MB)';
+                    }
+                    console.log('✅ Modal content updated');
+                } catch (error) {
+                    console.error('❌ Error updating modal content:', error);
+                }
+
+                document.getElementById('fileInput').accept = 'image/*';
+
+                try {
+                    resetUploadModal();
+                    console.log('✅ Modal reset completed');
+                } catch (error) {
+                    console.error('❌ Error resetting modal:', error);
+                }
+
+                try {
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                    console.log('✅ Modal shown successfully');
+                } catch (error) {
+                    console.error('❌ Error showing modal:', error);
+                    alert('Error showing modal: ' + error.message);
+                }
+            } catch (error) {
+                console.error('❌ Error in showImageUpload:', error);
+                alert('Upload error: ' + error.message + '. Please use direct upload instead.');
+            }
+        }
+
+        function showVideoUpload(targetInputId) {
+            currentTargetInput = targetInputId;
+            currentUploadType = 'video';
+
+            document.getElementById('uploadModalTitle').textContent = 'Upload Project Video';
+            document.getElementById('fileInput').accept = 'video/*';
+            document.querySelector('#uploadArea h5').textContent = 'Upload Project Video';
+            document.querySelector('#uploadArea p').textContent = 'Supported formats: MP4, WebM, MOV (Max: 50MB)';
+
+            resetUploadModal();
+            const modal = new bootstrap.Modal(document.getElementById('uploadModal'));
+            modal.show();
+        }
+
+        function resetUploadModal() {
+            document.querySelector('.upload-progress').classList.add('d-none');
+            document.querySelector('.upload-result').classList.add('d-none');
+            document.getElementById('useUploadedFileBtn').classList.add('d-none');
+            document.getElementById('fileInput').value = '';
+            document.querySelector('.progress-bar').style.width = '0%';
+        }
+
+        // File input change handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('uploadArea');
+
+            // File input change
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    uploadFile(e.target.files[0]);
+                }
+            });
+
+            // Drag and drop functionality
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('border-success');
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('border-success');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('border-success');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    uploadFile(files[0]);
+                }
+            });
+        });
+
+        async function uploadFile(file) {
+            try {
+                console.log('📤 Starting file upload:', {
+                    fileName: file.name,
+                    fileType: file.type,
+                    fileSize: file.size,
+                    uploadType: currentUploadType,
+                    targetInput: currentTargetInput
+                });
+
+                // Validate file type
+                if (currentUploadType === 'image' && !file.type.startsWith('image/')) {
+                    console.error('❌ Invalid file type for image:', file.type);
+                    showErrorToast('❌ Please select an image file');
+                    return;
+                }
+                if (currentUploadType === 'video' && !file.type.startsWith('video/')) {
+                    console.error('❌ Invalid file type for video:', file.type);
+                    showErrorToast('❌ Please select a video file');
+                    return;
+                }
+
+                // Show progress
+                document.querySelector('.upload-progress').classList.remove('d-none');
+                document.querySelector('.upload-result').classList.add('d-none');
+                console.log('📊 Upload progress shown');
+
+                // Create form data
+                const formData = new FormData();
+                formData.append(currentUploadType, file);
+                console.log('📦 FormData created');
+
+                // Upload file
+                console.log('🚀 Sending upload request to:', `/api/upload-${currentUploadType}`);
+                const response = await fetch(`/api/upload-${currentUploadType}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('📡 Upload response status:', response.status);
+                const result = await response.json();
+                console.log('📋 Upload response data:', result);
+
+                if (result.success) {
+                    // Hide progress, show result
+                    document.querySelector('.upload-progress').classList.add('d-none');
+                    document.querySelector('.upload-result').classList.remove('d-none');
+                    document.getElementById('useUploadedFileBtn').classList.remove('d-none');
+
+                    // Show preview
+                    const preview = document.getElementById('uploadedFilePreview');
+                    if (currentUploadType === 'image') {
+                        preview.innerHTML = `<img src="${result.imageUrl}" class="img-fluid rounded" style="max-height: 200px;">`;
+                    } else {
+                        preview.innerHTML = `<video controls class="w-100" style="max-height: 200px;"><source src="${result.videoUrl}"></video>`;
+                    }
+
+                    // Store the URL for use
+                    document.getElementById('useUploadedFileBtn').onclick = function() {
+                        const targetInput = document.getElementById(currentTargetInput);
+                        targetInput.value = currentUploadType === 'image' ? result.imageUrl : result.videoUrl;
+
+                        showSuccessToast(`✅ ${currentUploadType === 'image' ? 'Image' : 'Video'} added to project!`);
+                        bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
+                    };
+
+                    showSuccessToast(`✅ ${currentUploadType === 'image' ? 'Image' : 'Video'} uploaded successfully!`);
+                } else {
+                    document.querySelector('.upload-progress').classList.add('d-none');
+                    showErrorToast('❌ Upload failed: ' + result.message);
+                }
+            } catch (error) {
+                document.querySelector('.upload-progress').classList.add('d-none');
+                showErrorToast('❌ Upload failed: ' + error.message);
+            }
+        }
+
+        // Toast notification functions
+        function showLoadingToast(message) {
+            showToast(message, 'info', 'fas fa-spinner fa-spin');
+        }
+
+        function showSuccessToast(message) {
+            showToast(message, 'success', 'fas fa-check');
+        }
+
+        function showErrorToast(message) {
+            showToast(message, 'danger', 'fas fa-exclamation-triangle');
+        }
+
+        function showInfoToast(message) {
+            showToast(message, 'info', 'fas fa-info-circle');
+        }
+
+        function showToast(message, type, icon) {
+            const toast = document.createElement('div');
+            toast.className = `toast position-fixed top-0 end-0 m-3`;
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                <div class="toast-body bg-${type} text-white">
+                    <i class="${icon} me-2"></i>${message}
+                </div>
+            `;
+            document.body.appendChild(toast);
+            const toastInstance = new bootstrap.Toast(toast);
+            toastInstance.show();
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    document.body.removeChild(toast);
+                }
+            }, 5000);
+        }
+
+        function checkNameAvailability() {
+            const websiteName = document.getElementById('websiteName').value;
+
+            if (!websiteName) {
+                alert('Please enter a website name first!');
+                return;
+            }
+
+            const nameCheckModal = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Check "${websiteName}" Availability</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-search me-2"></i>Quick Availability Check</h6>
+                                <p>Click these links to check if your name is available:</p>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>🌐 Domain Availability:</h6>
+                                    <div class="d-grid gap-2 mb-3">
+                                        <a href="https://www.namecheap.com/domains/registration/results/?domain=${websiteName.toLowerCase().replace(/\s+/g, '')}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-globe me-2"></i>Check ${websiteName.toLowerCase().replace(/\s+/g, '')}.com
+                                        </a>
+                                        <a href="https://domains.google.com/registrar/search?searchTerm=${websiteName.toLowerCase().replace(/\s+/g, '')}" target="_blank" class="btn btn-outline-info btn-sm">
+                                            <i class="fab fa-google me-2"></i>Google Domains
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h6>📱 Social Media:</h6>
+                                    <div class="d-grid gap-2 mb-3">
+                                        <a href="https://github.com/${websiteName.toLowerCase().replace(/\s+/g, '')}" target="_blank" class="btn btn-outline-dark btn-sm">
+                                            <i class="fab fa-github me-2"></i>GitHub
+                                        </a>
+                                        <a href="https://linkedin.com/in/${websiteName.toLowerCase().replace(/\s+/g, '')}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                            <i class="fab fa-linkedin me-2"></i>LinkedIn
+                                        </a>
+                                        <a href="https://twitter.com/${websiteName.toLowerCase().replace(/\s+/g, '')}" target="_blank" class="btn btn-outline-info btn-sm">
+                                            <i class="fab fa-twitter me-2"></i>Twitter
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-success">
+                                <h6>✅ Safe Options:</h6>
+                                <ul class="mb-0">
+                                    <li><strong>Your Real Name</strong> - Always safe to use</li>
+                                    <li><strong>"${websiteName} Portfolio"</strong> - Generic and safe</li>
+                                    <li><strong>"${websiteName} - Developer"</strong> - Descriptive</li>
+                                    <li><strong>"${websiteName}'s Projects"</strong> - Personal</li>
+                                </ul>
+                            </div>
+
+                            <div class="alert alert-warning">
+                                <h6>⚖️ Legal Notes:</h6>
+                                <ul class="mb-0">
+                                    <li>Using your real name is always legally safe</li>
+                                    <li>Avoid company names or trademarked terms</li>
+                                    <li>For business use, consider trademark search at <a href="https://uspto.gov" target="_blank">uspto.gov</a></li>
+                                    <li>This is for personal portfolios - not legal advice</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showGenericModal(nameCheckModal);
+        }
+
+        function showColorCustomizer() {
+            const colorModal = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Color Customizer</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>To customize your website colors, edit the CSS variables in <code>public/css/style.css</code>:</p>
+                            <pre class="bg-light p-3"><code>:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #f39c12;
+    --success-color: #27ae60;
+    --info-color: #17a2b8;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showGenericModal(colorModal);
+        }
+
+        function backupWebsite() {
+            const backupData = {
+                timestamp: new Date().toISOString(),
+                version: '2.0',
+                note: 'Complete admin panel backup'
+            };
+
+            const dataStr = JSON.stringify(backupData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `portfolio-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+
+            alert('Backup downloaded successfully!');
+        }
+
+        function showDeployGuide() {
+            const deployModal = `
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Deploy Your Website Online</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-rocket me-2"></i>Ready to go live?</h6>
+                                <p>Choose from these popular deployment platforms:</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h6 class="mb-0">Vercel (Recommended)</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="small">Perfect for Node.js apps</p>
+                                            <ol class="small">
+                                                <li>Push to GitHub</li>
+                                                <li>Connect to Vercel</li>
+                                                <li>Deploy automatically</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header bg-success text-white">
+                                            <h6 class="mb-0">Netlify</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="small">Great for static sites</p>
+                                            <ol class="small">
+                                                <li>Drag & drop folder</li>
+                                                <li>Or connect GitHub</li>
+                                                <li>Get live URL</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header bg-info text-white">
+                                            <h6 class="mb-0">Heroku</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="small">Full-stack hosting</p>
+                                            <ol class="small">
+                                                <li>Install Heroku CLI</li>
+                                                <li>Create app</li>
+                                                <li>Deploy via Git</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showGenericModal(deployModal);
+        }
+
+        function showGenericModal(content) {
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = content;
+
+            document.body.appendChild(modal);
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+
+            modal.addEventListener('hidden.bs.modal', () => {
+                document.body.removeChild(modal);
+            });
+        }
+
+        // Content Management Functions
+        function showEditInstructions(projectName, lineNumbers) {
+            const editModal = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit "${projectName}"</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-edit me-2"></i>How to Edit This Project:</h6>
+                                <ol>
+                                    <li>Open <code>views/projects.ejs</code> in your text editor</li>
+                                    <li>Go to lines <strong>${lineNumbers}</strong></li>
+                                    <li>Look for the project titled "<strong>${projectName}</strong>"</li>
+                                    <li>Edit any of these elements:</li>
+                                    <ul>
+                                        <li><strong>Title:</strong> Change the text after the icon</li>
+                                        <li><strong>Description:</strong> Edit the paragraph text</li>
+                                        <li><strong>Technologies:</strong> Modify the badge elements</li>
+                                        <li><strong>Links:</strong> Update href attributes</li>
+                                        <li><strong>Status:</strong> Change the date/status text</li>
+                                    </ul>
+                                    <li>Save the file and restart your server</li>
+                                </ol>
+                            </div>
+                            <div class="alert alert-warning">
+                                <strong>💡 Tip:</strong> Use Ctrl+G in most text editors to jump to a specific line number!
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showGenericModal(editModal);
+        }
+
+        function showDeleteInstructions(projectName, lineNumbers) {
+            const deleteModal = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">Delete "${projectName}"</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-danger">
+                                <h6><i class="fas fa-exclamation-triangle me-2"></i>How to Delete This Project:</h6>
+                                <ol>
+                                    <li>Open <code>views/projects.ejs</code> in your text editor</li>
+                                    <li>Go to lines <strong>${lineNumbers}</strong></li>
+                                    <li>Find the section that starts with <code>&lt;!-- Project X --&gt;</code></li>
+                                    <li>Select everything from that comment to the closing <code>&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</code></li>
+                                    <li>Delete the entire section</li>
+                                    <li>Save the file and restart your server</li>
+                                </ol>
+                            </div>
+                            <div class="alert alert-warning">
+                                <strong>⚠️ Warning:</strong> This action cannot be undone! Make sure to backup your file first.
+                            </div>
+                            <div class="alert alert-info">
+                                <strong>💡 Alternative:</strong> Instead of deleting, you can comment out the project by wrapping it in <code>&lt;!-- ... --&gt;</code>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showGenericModal(deleteModal);
+        }
+
+        function openFileInstructions(fileName) {
+            const fileModal = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Open ${fileName}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-folder-open me-2"></i>How to Open This File:</h6>
+                                <ol>
+                                    <li><strong>Using VS Code:</strong> Right-click on your project folder → "Open with Code"</li>
+                                    <li><strong>Using Notepad++:</strong> File → Open → Navigate to your project</li>
+                                    <li><strong>Using any text editor:</strong> Open the file from your project directory</li>
+                                </ol>
+                                <p><strong>File Location:</strong> <code>${fileName}</code></p>
+                            </div>
+                            <div class="alert alert-success">
+                                <strong>✅ Recommended:</strong> Use VS Code for the best editing experience with syntax highlighting!
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showGenericModal(fileModal);
+        }
+
+        function clearAllProjects() {
+            if (confirm('⚠️ Are you sure you want to clear ALL projects? This will remove all existing projects from your portfolio.')) {
+                const clearModal = `
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning text-dark">
+                                <h5 class="modal-title">Clear All Projects</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-warning">
+                                    <h6><i class="fas fa-broom me-2"></i>To Clear All Projects:</h6>
+                                    <ol>
+                                        <li>Open <code>views/projects.ejs</code></li>
+                                        <li>Find the section <code>&lt;div class="row g-4"&gt;</code> (around line 74)</li>
+                                        <li>Delete everything between this div and its closing <code>&lt;/div&gt;</code> (around line 300)</li>
+                                        <li>Replace with: <code>&lt;!-- Add your projects here using the admin panel --&gt;</code></li>
+                                        <li>Save and restart your server</li>
+                                    </ol>
+                                </div>
+                                <div class="alert alert-success">
+                                    <strong>✅ Result:</strong> You'll have a clean projects page ready for your own content!
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                showGenericModal(clearModal);
+            }
+        }
+    </script>
+</body>
+</html>

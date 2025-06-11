@@ -1,0 +1,32 @@
+{
+  "name": "ai-student-portfolio",
+  "version": "1.0.0",
+  "description": "Personal portfolio website for an AI student",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "build": "node build.js",
+    "vercel-build": "echo 'Build completed'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "portfolio",
+    "ai",
+    "student",
+    "nodejs",
+    "express"
+  ],
+  "author": "AI Student",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.18.1",
+    "multer": "^2.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
