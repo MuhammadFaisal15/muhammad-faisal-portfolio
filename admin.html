@@ -1198,6 +1198,7 @@ Line 1: # 🤖 ${data.websiteName} Portfolio Website
 
             try {
                 showLoadingToast('Updating homepage files...');
+                console.log('🚀 Sending data:', heroData);
 
                 const response = await fetch('/api/update-homepage', {
                     method: 'POST',
@@ -1207,7 +1208,15 @@ Line 1: # 🤖 ${data.websiteName} Portfolio Website
                     body: JSON.stringify(heroData)
                 });
 
+                console.log('📡 Response status:', response.status);
+                console.log('📡 Response ok:', response.ok);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const result = await response.json();
+                console.log('📋 Response data:', result);
 
                 if (result.success) {
                     showSuccessToast('✅ Homepage updated successfully! Refresh your website to see changes.');
@@ -1215,6 +1224,7 @@ Line 1: # 🤖 ${data.websiteName} Portfolio Website
                     showErrorToast('❌ Error: ' + result.message);
                 }
             } catch (error) {
+                console.error('❌ Update error:', error);
                 showErrorToast('❌ Failed to update files: ' + error.message);
             }
         }
